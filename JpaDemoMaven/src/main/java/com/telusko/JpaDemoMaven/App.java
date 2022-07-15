@@ -23,7 +23,7 @@ public class App
         
         
         Alien a1=new Alien();
-        a1.setId(3);
+        //a1.setId(4);
         a1.setName("Jrr yadav");
         a1.setPoints(44);
         em.getTransaction().begin();

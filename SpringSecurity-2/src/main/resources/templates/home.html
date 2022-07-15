@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<div style="text-align: center">
+		<h1>Spring Security Demo</h1>
+		<p>
+			Click <a th:href="@{/welcome}">here</a> to see a greeting.
+		</p>
+		
+		<p th:if=!${isLog}>
+			Click <a th:href="@{/login}">here</a> TO login
+		</p>
+
+		<form th:if=${isLog} th:action="@{/logout}" method="post">
+			<input type="submit" value="Logout" />
+		</form>
+	</div>
+</body>
+</html>
+
