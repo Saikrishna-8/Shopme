@@ -14,22 +14,21 @@ import com.shopme.common.entity.Category;
 
 @Repository
 public interface CategoryRepository extends PagingAndSortingRepository<Category, Integer> {
-	
+
 	@Query("select c from Category c where c.parent.id is Null")
 	public List<Category> findRootCategories(Sort sort);
-	
-	
+
 	@Query("select c from Category c where c.parent.id is Null")
 	public Page<Category> findRootCategories(Pageable pageable);
-	
-	
+
 	public Category findByName(String name);
+
 	public Category findByAlias(String alias);
-	
+
 	@Query("UPDATE Category c SET c.enabled =?2 WHERE c.id=?1")
 	@Modifying
 	public void updateEnabledStatus(Integer id, boolean enabled);
-	
+
 	@Query("select c from Category c Where CONCAT(c.name,' ',c.alias) LIKE %?1%")
-	public Page<Category> search(String keyword,Pageable pageable);
+	public Page<Category> search(String keyword, Pageable pageable);
 }

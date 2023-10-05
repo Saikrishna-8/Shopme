@@ -23,62 +23,58 @@ import com.shopme.common.entity.User;
 @Transactional
 public class CategoryService {
 
-	public static final int CATEGORIES_PER_PAGE=4;
+	public static final int CATEGORIES_PER_PAGE = 4;
 	public static long totalElements;
 	public static long totalPages;
 	@Autowired
 	public CategoryRepository repo;
-	public String sortDir="asc";
+	public String sortDir = "asc";
 
 	public List<Category> listAll() {
 		List<Category> list = (List<Category>) repo.findAll();
 		return list;
 	}
-	
-	public List<Category> listByPage(int pageNumber,String sortDir)
-	{
-		Sort sort=Sort.by("name");
-		sort=sortDir.equals("asc")?sort.ascending():sort.descending();
-		Pageable pageable=PageRequest.of(pageNumber-1,CATEGORIES_PER_PAGE,sort);
-		Page<Category> page=repo.findRootCategories(pageable);
-		totalElements=page.getTotalElements();
-		totalPages=page.getTotalPages();
+
+	public List<Category> listByPage(int pageNumber, String sortDir) {
+		Sort sort = Sort.by("name");
+		sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+		Pageable pageable = PageRequest.of(pageNumber - 1, CATEGORIES_PER_PAGE, sort);
+		Page<Category> page = repo.findRootCategories(pageable);
+		totalElements = page.getTotalElements();
+		totalPages = page.getTotalPages();
 		List<Category> catsInForm = new ArrayList<Category>();
 		this.sortDir = sortDir;
 		for (Category cat : page.getContent()) {
 			getSubHierarchicalSorting(cat, 0, catsInForm, 0);
 		}
 		return catsInForm;
- 		//return repo.findRootCategories(pageable);
-	} 
-	
-	
-	public List<Category> search(int pageNumber,String sortDir,String keyword)
-	{
-		Sort sort=Sort.by("name");
-		sort=sortDir.equals("asc")?sort.ascending():sort.descending();
-		Pageable pageable=PageRequest.of(pageNumber-1,CATEGORIES_PER_PAGE,sort);
-		Page<Category> page=repo.search(keyword, pageable);
-		totalElements=page.getTotalElements();
-		totalPages=page.getTotalPages();
+		// return repo.findRootCategories(pageable);
+	}
+
+	public List<Category> search(int pageNumber, String sortDir, String keyword) {
+		Sort sort = Sort.by("name");
+		sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+		Pageable pageable = PageRequest.of(pageNumber - 1, CATEGORIES_PER_PAGE, sort);
+		Page<Category> page = repo.search(keyword, pageable);
+		totalElements = page.getTotalElements();
+		totalPages = page.getTotalPages();
 		List<Category> catsInForm = new ArrayList<Category>();
 		this.sortDir = sortDir;
 		for (Category cat : page.getContent()) {
-			searchGetHierarchical(cat,catsInForm);
+			searchGetHierarchical(cat, catsInForm);
 		}
 		return catsInForm;
- 		//return repo.findRootCategories(pageable);
-	} 
-	
+		// return repo.findRootCategories(pageable);
+	}
+
 	private void searchGetHierarchical(Category cat, List<Category> catsInForm) {
-		if(cat==null)
+		if (cat == null)
 			return;
-		String str="";
-		Category cat1=cat;
-		while(cat1.getParent()!=null)
-		{
-			str+="--";
-			cat1=cat1.getParent();
+		String str = "";
+		Category cat1 = cat;
+		while (cat1.getParent() != null) {
+			str += "--";
+			cat1 = cat1.getParent();
 		}
 		catsInForm.add(Category.copyAll(cat, str));
 	}
@@ -129,8 +125,14 @@ public class CategoryService {
 			catsInForm.add(Category.copyAll(cat, str));
 		}
 	}
-	
+
 	public Category save(Category category) {
+		Category parent = category.getParent();
+		if (parent != null) {
+			String allParentIds = parent.getAllParentIDs() == null ? "-" : parent.getAllParentIDs();
+			allParentIds += String.valueOf(parent.getId()) + "-";
+			category.setAllParentIDs(allParentIds);
+		}
 		return repo.save(category);
 	}
 
@@ -168,8 +170,13 @@ public class CategoryService {
 	public void UpdateEnabledStatus(Integer id, boolean b) {
 		repo.updateEnabledStatus(id, b);
 	}
-	
+
 	public void deleteById(int id) {
 		repo.deleteById(id);
+	}
+
+	public List<Category> listCategoriesUsedInForm() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

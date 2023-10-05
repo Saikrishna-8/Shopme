@@ -9,6 +9,8 @@
 
 <script th:src="@{/richtext/jquery.richtext.min.js}"></script>
 
+
+
 </head>
 
 <body>
@@ -24,7 +26,9 @@
 		<form th:action="@{/products/save}" method="post"
 			onsubmit="return checkUnique(this)" th:object="${product}"
 			enctype="multipart/form-data">
-			<input type="hidden" th:field="*{id}">
+			<input type="hidden" th:field="*{id}"> <input
+				th:if="${product.category != null}" type="hidden" id="categoryId"
+				th:value="${product.category.id}" />
 
 			<div>
 				<!-- Nav tabs -->
@@ -48,18 +52,58 @@
 					</div>
 
 					<div class="tab-pane" id="description" role="tabpanel">
-						<div th:replace="product/product_description::content"></div>
+
+						<th:block sec:authorize="hasAnyAuthority('admin','Editor')">
+							<div th:replace="product/product_description::content"></div>
+						</th:block>
+
+						<th:block sec:authorize="hasAuthority('SalesPersion')">
+							<div th:replace="product/product_description_read_only::content"></div>
+						</th:block>
+
 					</div>
 
-					<div class="tab-pane" id="images" role="tabpanel">Images</div>
+					<div class="tab-pane" id="images" role="tabpanel">
+						<th:block sec:authorize="hasAnyAuthority('admin','Editor')">
+							<div th:replace="product/product_images::content"></div>
+						</th:block>
 
-					<div class="tab-pane" id="details" role="tabpanel">Details</div>
+						<th:block sec:authorize="hasAuthority('SalesPersion')">
+							<div th:replace="product/product_images_read_only::content"></div>
+						</th:block>
+
+
+					</div>
+
+					<div class="tab-pane" id="details" role="tabpanel">
+						<th:block sec:authorize="hasAnyAuthority('admin','Editor')">
+
+							<div th:replace="product/product_detail::content"></div>
+
+							<div>
+								<input type="button" class="btn btn-secondary"
+									value="Add More Detail" onclick="addNextDetailSection()" />
+							</div>
+						</th:block>
+
+						<th:block sec:authorize="hasAuthority('SalesPersion')">
+							<div th:replace="product/product_details_read_only :: content"></div>
+						</th:block>
+					</div>
 
 					<div class="tab-pane" id="shipping" role="tabpanel">
-						<div th:replace="product/product_shipping::content"></div>
+						<th:block sec:authorize="hasAnyAuthority('admin','Editor')">
+							<div th:replace="product/product_shipping::content"></div>
+						</th:block>
+
+
+						<th:block sec:authorize="hasAuthority('SalesPersion')">
+							<div th:replace="product/product_shipping_read_only :: content"></div>
+						</th:block>
 					</div>
 
 				</div>
+
 			</div>
 
 			<div class="text-center">
@@ -76,77 +120,26 @@
 	<div th:replace="fragments::footer"></div>
 
 	<script type="text/javascript">
+		MAX_FILE_SIZE = 1048576; // 1mb
 		moduleURL = "[[@{/products}]]";
 		brandModuleURL = "[[@{/brands}]]";
-
-		dropdownBrands = $("#brand");
-		dropdownCategories = $("#category");
+		defaultImageThumbnailSrc = "[[ @{/images/image-thumbnail.png} ]]";
+		checkUniqueUrl = "[[@{/products/check_unique}]]";
 
 		$(document).ready(function() {
+			$("#buttonCancel").on("click", function() {
+				window.location = "[[@{/products}]]"
+			})
 
-			$("#shortDescription").richText();
-			$("#fullDescription").richText();
-
-			dropdownBrands.change(function() {
-				dropdownCategories.empty();
-				getCategories();
-			});
-
-			getCategories();
 		});
-
-		function getCategories() {
-			brandId = dropdownBrands.val();
-			url = brandModuleURL + "/" + brandId + "/categories";
-
-			$.get(url, function(responseJson) {
-				//alert(responseJson);
-
-				$.each(responseJson, function(index, category) {
-					$("<option>").val(category.id).text(category.name)
-							.appendTo(dropdownCategories);
-				});
-			});
-
-			//alert(brandId);
-		}
-
-		function checkUnique(form) {
-			productId = $("#id").val();
-			productName = $("#name").val();
-
-			csrfValue = $("input[name='_csrf']").val();
-
-			url = "[[ @{/products/check_unique } ]]";
-			params = {
-				id : productId,
-				name : productName,
-				_csrf : csrfValue
-			};
-			$
-					.post(
-							url,
-							params,
-							function(response) {
-								if (response == "OK") {
-									form.submit();
-								} else if (response == "Duplicate") {
-									showModalDialog("Warning ",
-											"There is another product having the name "
-													+ productName);
-								} else {
-									//alert(response);
-									showModalDialog("Error ",
-											"There is Unknown response from the server");
-								}
-							}).fail(
-							function() {
-								showModalDialog("Error ",
-										"Could not connect to the Server");
-							})
-
-			return false;
-		}
 	</script>
+
+	<script type="text/javascript" th:src="@{/js/product_form_overview.js}"></script>
+	<script type="text/javascript" th:src="@{/js/product_form_images.js}"></script>
+	<script type="text/javascript" th:src="@{/js/product_form_details.js}"></script>
+
+
+
+
 </body>
 </html>

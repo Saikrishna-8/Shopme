@@ -53,17 +53,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-		.antMatchers("/users/**").hasAuthority("admin")
+		.antMatchers("/states/list_by_country/**").hasAnyAuthority("admin", "SalesPersion")
+		.antMatchers("/users/**","/settings/**","/countries/**","states/**").hasAuthority("admin")
 		.antMatchers("/categories/**").hasAnyAuthority("admin","Editor")
 		.antMatchers("/brands/**").hasAnyAuthority("admin","Editor")
-		.antMatchers("/products/**").hasAnyAuthority("admin","SalesPersion","Editor","Shipper")
+		
+		.antMatchers("/products/new", "/products/delete/**").hasAnyAuthority("admin", "Editor")
+		
+		.antMatchers("/products/edit/**", "/products/save", "/products/check_unique")
+		.hasAnyAuthority("admin", "Editor", "SalesPersion")
+		
+		.antMatchers("/products", "/products/", "/products/detail/**", "/products/page/**")
+		.hasAnyAuthority("admin", "Editor", "SalesPersion", "Shipper")
+		
+		.antMatchers("/products/**").hasAnyAuthority("admin","Editor")
+		
+		
 		.antMatchers("/customers/**").hasAnyAuthority("admin","SalesPersion")
 		.antMatchers("/shipping/**").hasAnyAuthority("admin","SalesPersion")
 		.antMatchers("/orders/**").hasAnyAuthority("admin","SalesPersion","Shipper")
 		.antMatchers("/reports/**").hasAnyAuthority("admin","SalesPersion")
 		.antMatchers("/articles/**").hasAnyAuthority("admin","Editor")
 		.antMatchers("/menus/**").hasAnyAuthority("admin","Editor")
-		.antMatchers("/settings/**").hasAuthority("admin")
 		.anyRequest().authenticated()
 		.and()
 		.formLogin()

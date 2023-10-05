@@ -5,25 +5,33 @@ $(document)
 				.change(
 					function() {
 
-						fileSize = this.files[0].size;
-						file = this.files[0];
-						str = file.name;
-						//alert("File Name is "+str+"  file name length "+str.length+"  "+fileSize);
-						if (fileSize > 1048576
-							|| str.length > 127) {
-
-							this
-								.setCustomValidity("File Size  Should be less than 1Mb OR File Name Should be less than 127 Charecters.");
-							this.reportValidity();
-						} else {
-							this
-								.setCustomValidity("");
-							showImageThumbNail(this);
-						}
+						if (checkFileSize(this)) { showImageThumbNail(this); }
 
 					})
 
 		});
+
+
+function checkFileSize(fileInput) {
+
+	fileSize = fileInput.files[0].size;
+	str = fileInput.files[0].name;
+
+	if (fileSize > MAX_FILE_SIZE
+		|| str.length > 127) {
+
+		fileInput
+			.setCustomValidity("File Size  Should be less than " + MAX_FILE_SIZE + "KB OR File Name Should be less than 127 Charecters.");
+		fileInput.reportValidity();
+		return false;
+	} else {
+		fileInput
+			.setCustomValidity("");
+
+		return true;
+	}
+
+}
 
 function showImageThumbNail(fileInput) {
 	var file = fileInput.files[0];

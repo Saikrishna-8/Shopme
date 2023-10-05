@@ -15,23 +15,22 @@ import org.supercsv.prefs.CsvPreference;
 import com.shopme.common.entity.Category;
 import com.shopme.common.entity.User;
 
-public class CategoryCsvExporter  extends AbstractExporter{
+public class CategoryCsvExporter extends AbstractExporter {
 
 	public void export(List<Category> listAll, HttpServletResponse response) throws IOException {
-		
-		super.setResponseHeader(response, "text/csv",".csv");
-		
-		ICsvBeanWriter csvWriter=new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-		String[] csvHeader= {"ID","Category Name","Alias","Enabled"};
+
+		super.setResponseHeader(response, "text/csv", ".csv");
+
+		ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+		String[] csvHeader = { "ID", "Category Name", "Alias", "Enabled" };
 		csvWriter.writeHeader(csvHeader);
-		
-		String[] fieldMapping= {"id","name","alias","enabled"};
-		
-		for(Category cat:listAll)
-		{
+
+		String[] fieldMapping = { "id", "name", "alias", "enabled" };
+
+		for (Category cat : listAll) {
 			csvWriter.write(cat, fieldMapping);
 		}
-		
+
 		csvWriter.close();
 	}
 }

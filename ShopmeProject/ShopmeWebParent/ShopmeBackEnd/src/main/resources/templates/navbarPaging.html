@@ -8,7 +8,7 @@
 
 
 	<div th:fragment="pagination(URL)">
-		<nav aria-label="Page navigation example">
+		<nav aria-label="Page navigation example" th:if="${totalItems>0}">
 			<ul class="pagination justify-content-center flex-wrap">
 
 				<li th:class="${currentPage==1? 'page-item disabled':'page-item'}">
@@ -32,8 +32,7 @@
 				</li>
 				<li
 					th:class="${currentPage==totalPages? 'page-item disabled':'page-item'}">
-					<a
-					th:replace="fragments :: page_link(${URL},${totalPages},'Last')"></a>
+					<a th:replace="fragments :: page_link(${URL},${totalPages},'Last')"></a>
 				</li>
 			</ul>
 		</nav>

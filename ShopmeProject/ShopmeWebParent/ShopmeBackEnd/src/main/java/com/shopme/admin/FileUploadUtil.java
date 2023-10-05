@@ -21,28 +21,26 @@ public class FileUploadUtil {
 				throw new IOException("problem occured while file Creating Folder user-photos Folder");
 			}
 		}
-		
-		try(InputStream inputStream=multipartFile.getInputStream()) {
-			Path filePath=uploadPath.resolve(fileName);
-			Files.copy(inputStream,filePath,StandardCopyOption.REPLACE_EXISTING);
-			
+
+		try (InputStream inputStream = multipartFile.getInputStream()) {
+			Path filePath = uploadPath.resolve(fileName);
+			Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+
 		} catch (IOException e) {
-			
-			throw new IOException("Could not save File"+fileName,e);
+
+			throw new IOException("Could not save File" + fileName, e);
 		}
 	}
-	
-	public static void cleanDir(String dir)
-	{
-		Path diPath=Paths.get(dir);
-		
+
+	public static void cleanDir(String dir) {
+		Path diPath = Paths.get(dir);
+
 		try {
-			Files.list(diPath).forEach(file->{
-				if(!Files.isDirectory(file))
-				{
+			Files.list(diPath).forEach(file -> {
+				if (!Files.isDirectory(file)) {
 					try {
 						Files.delete(file);
-					}catch (IOException e) {
+					} catch (IOException e) {
 						System.out.println("Could not delete the file");
 					}
 				}
@@ -51,9 +49,8 @@ public class FileUploadUtil {
 			System.out.println("Could not List the Directory");
 		}
 	}
-	
-	public static void removeDir(String dir)
-	{
+
+	public static void removeDir(String dir) {
 		cleanDir(dir);
 		try {
 			Files.delete(Paths.get(dir));
@@ -61,5 +58,6 @@ public class FileUploadUtil {
 			System.out.println("Could not Delete the Directory");
 		}
 	}
-
+	
+	
 }

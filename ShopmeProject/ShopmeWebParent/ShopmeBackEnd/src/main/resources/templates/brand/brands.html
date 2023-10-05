@@ -45,10 +45,13 @@
 					<tr>
 						<th class="hideable-column">Id</th>
 						<th>Brand Image</th>
-						<th><a class="text-white"
+						<!-- 	<th><a class="text-white"
 							th:href="@{/brands/page/1?sortDir={sd}&sortField=name&keyword={kw} (sd=${sortDir=='asc' ? 'dsc':'asc'},kw=${keyword} )}"
 							th:class="${sortDir=='asc'? 'fas fa-sort-up':'fas fa-sort-down'}">
-								Brand Name </a></th>
+								Brand Name </a></th> -->
+
+						<th
+							th:replace="fragments :: column_link1('brands','name', 'Brand Name', 'none')" />
 						<th>Categories</th>
 						<th>Actions</th>
 					</tr>

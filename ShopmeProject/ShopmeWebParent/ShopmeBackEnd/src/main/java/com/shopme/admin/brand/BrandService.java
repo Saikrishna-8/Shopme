@@ -29,9 +29,8 @@ public class BrandService {
 	}
 
 	public Page<Brand> listByPage(int pageNumber, String sortField, String sortDir, String keyword) {
-		if(sortField==null)
-		{
-			sortField="name";
+		if (sortField == null) {
+			sortField = "name";
 		}
 		Sort sort = Sort.by(sortField);
 		sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
@@ -67,18 +66,16 @@ public class BrandService {
 			return "Duplicate Name";
 		}
 	}
-	
-	public Brand findById(Integer id)
-	{
-		return brandRepo.findById(id).get();	
+
+	public Brand findById(Integer id) {
+		return brandRepo.findById(id).get();
 	}
-	
+
 	public void deleteById(int id) {
 		brandRepo.deleteById(id);
 	}
-	
-	public List<Brand> listAllBrands()
-	{
+
+	public List<Brand> listAllBrands() {
 		return brandRepo.findAll();
 	}
 }

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -31,15 +32,20 @@ public class Category {
 
 	private boolean enabled;
 
+	@Column(name = "all_parent_ids", length = 256, nullable = true)
+	private String allParentIDs;
+
 	@OneToOne
 	@JoinColumn(name = "parent_id")
 	private Category parent;
 
 	@OneToMany(mappedBy = "parent")
+	@OrderBy("name asc")
 	private Set<Category> children = new HashSet<>();
 
 	public Category() {
 	}
+
 	public Category(String name, String alias, String image) {
 		this.name = name;
 		this.alias = alias;
@@ -108,6 +114,14 @@ public class Category {
 		this.enabled = enabled;
 	}
 
+	public String getAllParentIDs() {
+		return allParentIDs;
+	}
+
+	public void setAllParentIDs(String allParentIDs) {
+		this.allParentIDs = allParentIDs;
+	}
+
 	public Category getParent() {
 		return parent;
 	}
@@ -149,18 +163,21 @@ public class Category {
 		cat1.setEnabled(cat.isEnabled());
 		cat1.setImage(cat.getImage());
 		cat1.setParent(cat.getParent());
-		cat1.setHasChildren(cat.getChildren().size()>0);
+		cat1.setHasChildren(cat.getChildren().size() > 0);
 		return cat1;
 	}
+
 	@Transient
 	public boolean hasChildren;
 
 	public boolean isHasChildren() {
 		return hasChildren;
 	}
+
 	public void setHasChildren(boolean hasChildren) {
 		this.hasChildren = hasChildren;
 	}
+
 	@Override
 	public String toString() {
 		return this.name;
